@@ -1,0 +1,8 @@
+mapred is local mapred program
+
+we want to make the multiprocess in the local mashine is more simple!
+the program base on the libtask 
+
+The Usage for mapred is :
+
+cat xx.txt | mapred --mapper="python xx.py" --count=10 | sort | mapred --reducer="cat"
