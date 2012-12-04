@@ -18,6 +18,13 @@ void mapred_buf_free(mapred_buf_t* buf)
     safe_free(buf->ptr);
 }
 
+void mapred_buf_readjust(mapred_buf_t* buf) 
+{
+    memmove(buf->ptr, buf->ptr + buf->pos, buf->size - buf->pos);
+    buf->pos = 0;
+    buf->size -= buf->pos;
+}
+
 int mapred_buf_setcapacity(mapred_buf_t* buf, uint32_t capacity) 
 {
     if (capacity < buf->capacity) return 0;

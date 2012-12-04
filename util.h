@@ -5,6 +5,7 @@
 
 #define error(exitno, errno, format, ...) \
     error_at_line(exitno, errno,  __FILE__, __LINE__, format, ##__VA_ARGS__)
+
 #define check_error(x, format, ...) \
     do { \
         if (!(x)) { \

@@ -80,8 +80,8 @@ int mapred_spawn_process(const char* cmd, int* in, int* out)
     check_exp(pid = fork(), "fork error");
     
     if (pid == 0) {
-        close(in[0]);
-        close(out[1]);
+        close(in_fds[0]);
+        close(out_fds[1]);
         check_exp(dup2(out[0], STDIN_FILENO));
         close(out[0]);
         char* shell = get_shell();
@@ -89,10 +89,10 @@ int mapred_spawn_process(const char* cmd, int* in, int* out)
         error(EXIT_FAILURE, errno, "execl error");
     }
 
-    close(in[1]);
-    close(out[0]);
+    close(in_fds[1]);
+    close(out_fds[0]);
 
-    *in = in[0];
-    *out = out[1];
+    *in = in_fds[0];
+    *out = out_fds[1];
     return pid;
 }
