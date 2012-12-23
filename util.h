@@ -1,6 +1,8 @@
 #ifndef _UTIL_H__
 #define _UTIL_H__
 
+#include <stdio.h>
+
 #define log(format, ...) fprintf(stderr, format, ##__VA_ARGS__)
 
 #define error(exitno, errno, format, ...) \
