@@ -63,7 +63,7 @@ int getopts(int argc, char** argv)
     }
     
     if (optind < argc) {
-        int fd = open(argv[optind++], O_RDONLY | O_CLOEXEC);
+        int fd = open(argv[optind++], O_RDONLY);
         if (fd < 0 || dup2(fd, STDIN_FILENO) < 0) {
             error(EXIT_FAILURE, errno, "open file error");
         }
