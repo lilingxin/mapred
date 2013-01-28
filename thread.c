@@ -66,18 +66,16 @@ void event_handler(int fd, short e, void* args)
             update_stat(STAT_WRITE_LINE);
         break;
 
-    case STAT_WRITE_LINE:
     case STAT_LAST_BUF:
-        rc = get_line(buf, &line, &len);
-        if (rc == E_NEED_MORE) {
-            if (st == STAT_LAST_BUF) {
-                if (write(fd, buf->cur, buf->bytes) < 0) {
-                    log("write error, %s\n", strerror(errno));
-                }
-                update_stat(STAT_CLOSE_PIPE);
-            } else {
-                update_stat(STAT_READ_MORE);
-            }
+        if (write(fd, buf->cur, buf->bytes) < 0) {
+            log("write error, %s\n", strerror(errno));
+        } 
+        update_stat(STAT_CLOSE_PIPE);
+        break;
+
+    case STAT_WRITE_LINE:
+        if (get_line(buf, &line, &len) != E_OK) {
+            update_stat(STAT_READ_MORE);
             break;
         }
 
@@ -98,19 +96,17 @@ void revent_handler(int fd, short e, void* args)
 {
     struct fdev_t* fdev = (struct fdev_t*)args;
     struct buf_t* b = &fdev->buf;
-    int rc1 = try_read_more(b, fd);
-    if (rc1 == E_ERROR) {
+    char *line = NULL;
+    size_t length = 0;
+
+    if (try_read_more(b, fd) == E_ERROR) {
         write(STDOUT_FILENO, b->cur, b->bytes);
         event_del(&fdev->ev);
         return;
     }
 
-    while (true) {
-        char* line = NULL;
-        size_t len = 0;
-        int rc2 = get_line(b, &line, &len);
-        if (rc2 == E_NEED_MORE) break;
-        write(STDOUT_FILENO, line, len);
+    for ( ;get_line(b, &line, &length) == E_OK; ) {
+        write(STDOUT_FILENO, line, length);
     }    
 }
 
